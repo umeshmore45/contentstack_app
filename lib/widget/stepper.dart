@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_contentstack_app/modules/login.dart';
 import 'package:my_contentstack_app/services/login.dart';
+import 'package:my_contentstack_app/widget/select_stack.dart';
 
 class MyStatefulStepper extends StatefulWidget {
   const MyStatefulStepper({super.key});
@@ -12,24 +13,23 @@ class MyStatefulStepper extends StatefulWidget {
 enum SingingCharacter { na, eu, azNa }
 
 class _MyStatefulStepper extends State<MyStatefulStepper> {
-  LogIn? _logData;
+  // late LogInReturn _logData;
   int _index = 0;
   SingingCharacter? _character = SingingCharacter.na;
   final nameController = TextEditingController();
   final passwordController = TextEditingController();
 
-  Future<LogIn> onSubmit(email, password) async {
+  Future<LogInReturn> onSubmit(email, password) async {
     try {
       var data = await logInCall(email, password);
-
       if (data.statusCode == 201) {
         String resStaring = data.body;
-        return logInFromJson(resStaring);
+        return logInReturnFromJson(resStaring);
       }
     } catch (err) {
       rethrow;
     }
-    throw "test";
+    throw "Error";
   }
 
   @override
@@ -54,10 +54,15 @@ class _MyStatefulStepper extends State<MyStatefulStepper> {
                 onPressed: () async {
                   String email = nameController.text;
                   String password = passwordController.text;
-                  LogIn data = await onSubmit(email, password);
-                  setState(() {
-                    _logData = data;
-                  });
+                  LogInReturn data = await onSubmit(email, password);
+
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => MySelectStack(data: data)));
+                  // setState(() {
+                  //   _logData = data;
+                  // });
                 },
                 child: const Text('Log In'),
               ),

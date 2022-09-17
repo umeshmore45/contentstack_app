@@ -10,6 +10,10 @@ class RouteGenrator {
         return MaterialPageRoute(
             builder: (contetx) => const MyStatefulStepper());
 
+      case '/stack':
+        return MaterialPageRoute(
+            builder: (contetx) => const MyStatefulStepper());
+
       default:
         return _errorRoute();
     }
