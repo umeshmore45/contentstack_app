@@ -61,7 +61,9 @@ class _MySelectStack extends State<MySelectStack> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => MyPermissionsWidget(
-                                  stackData: reslut, orgUid: orgvalue)));
+                                  stackData: reslut,
+                                  orgUid: orgvalue,
+                                  userUid: widget.data.user[0].userUid)));
                     },
                     child: const Text('Submit'),
                   ),
