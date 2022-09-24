@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_contentstack_app/modules/login.dart';
+import 'package:my_contentstack_app/widget/permission_toggle.dart';
 
 class MySelectStack extends StatefulWidget {
   final LogInReturn data;
@@ -25,6 +26,7 @@ class _MySelectStack extends State<MySelectStack> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+            automaticallyImplyLeading: false,
             title: Center(
               child: Text(
                   "Hello ${widget.data.user[0].firstName} ${widget.data.user[0].lastName}",
@@ -51,7 +53,16 @@ class _MySelectStack extends State<MySelectStack> {
               return Row(
                 children: <Widget>[
                   TextButton(
-                    onPressed: () async {},
+                    onPressed: () {
+                      final reslut = stackList
+                          .where((element) => element.stackApiKey == stackValue)
+                          .toList();
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MyPermissionsWidget(
+                                  stackData: reslut, orgUid: orgvalue)));
+                    },
                     child: const Text('Submit'),
                   ),
                   TextButton(
