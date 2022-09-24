@@ -9,22 +9,28 @@ class MySelectStack extends StatefulWidget {
   State<MySelectStack> createState() => _MySelectStack();
 }
 
-final List<String> list = <String>['One', 'Two', 'Three', 'Four'];
-
 class _MySelectStack extends State<MySelectStack> {
   int _index = 0;
-  String dropdownValue = list.first;
+  String orgvalue = "blt18ca3799a1c334ef";
+  List<dynamic> stackList = [];
+  String stackValue = "bltc9614e874a81506d";
+
+  @override
+  void initState() {
+    super.initState();
+    // print(widget.data.user[0].stacks.map((e) => ));
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
             title: Center(
-              child:
-                  Text("Hello ${widget.data.firstName} ${widget.data.lastName}",
-                      style: const TextStyle(
-                        color: Colors.black,
-                      )),
+              child: Text(
+                  "Hello ${widget.data.user[0].firstName} ${widget.data.user[0].lastName}",
+                  style: const TextStyle(
+                    color: Colors.black,
+                  )),
             ),
             actions: [Container()]),
         body: Stepper(
@@ -38,6 +44,7 @@ class _MySelectStack extends State<MySelectStack> {
                     onPressed: controlsDetails.onStepContinue,
                     child: const Text('Continue'),
                   ),
+                  Container()
                 ],
               );
             } else {
@@ -45,7 +52,7 @@ class _MySelectStack extends State<MySelectStack> {
                 children: <Widget>[
                   TextButton(
                     onPressed: () async {},
-                    child: const Text('Log In'),
+                    child: const Text('Submit'),
                   ),
                   TextButton(
                     onPressed: controlsDetails.onStepCancel,
@@ -72,10 +79,10 @@ class _MySelectStack extends State<MySelectStack> {
           // },
           steps: <Step>[
             Step(
-              title: const Text('Select Region'),
+              title: const Text('Select Organization'),
               content: Column(children: [
                 DropdownButton<String>(
-                  value: dropdownValue,
+                  value: orgvalue,
                   icon: const Icon(Icons.arrow_downward),
                   elevation: 16,
                   style: const TextStyle(color: Colors.deepPurple),
@@ -84,18 +91,50 @@ class _MySelectStack extends State<MySelectStack> {
                     color: Colors.deepPurpleAccent,
                   ),
                   onChanged: (String? value) {
-                    // This is called when the user selects an item.
+                    final stackData = [];
+                    late String stackName;
+                    widget.data.user[0].stacks.forEach((element) {
+                      if (element.orgUid == value) {
+                        element.stacks.forEach((item) {
+                          stackData.add(item);
+                          stackName = item.stackApiKey;
+                        });
+                      }
+                    });
                     setState(() {
-                      dropdownValue = value!;
+                      stackValue = stackName;
+                      stackList = stackData;
+                      orgvalue = value!;
                     });
                   },
-                  items: list.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
+                  items: widget.data.user[0].stacks
+                      .map((e) => DropdownMenuItem(
+                          value: e.orgUid, child: Text(e.orgName)))
+                      .toList(),
                 )
+              ]),
+            ),
+            Step(
+              title: const Text('Select Stack'),
+              content: Column(children: [
+                DropdownButton<dynamic>(
+                    value: stackValue,
+                    icon: const Icon(Icons.arrow_downward),
+                    elevation: 16,
+                    style: const TextStyle(color: Colors.deepPurple),
+                    underline: Container(
+                      height: 2,
+                      color: Colors.deepPurpleAccent,
+                    ),
+                    onChanged: (dynamic value) {
+                      setState(() {
+                        stackValue = value;
+                      });
+                    },
+                    items: stackList
+                        .map((e) => DropdownMenuItem(
+                            value: e.stackApiKey, child: Text(e.stackName)))
+                        .toList()),
               ]),
             ),
           ],

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:my_contentstack_app/modules/login.dart';
 import 'package:my_contentstack_app/services/login.dart';
@@ -22,11 +24,13 @@ class _MyStatefulStepper extends State<MyStatefulStepper> {
   Future<LogInReturn> onSubmit(email, password) async {
     try {
       var data = await logInCall(email, password);
-      if (data.statusCode == 201) {
-        String resStaring = data.body;
+      print('hello run time ${data.body.runtimeType}');
+      if (data.statusCode == 200) {
+        final resStaring = data.body;
         return logInReturnFromJson(resStaring);
       }
     } catch (err) {
+      print(err);
       rethrow;
     }
     throw "Error";

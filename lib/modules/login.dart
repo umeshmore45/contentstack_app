@@ -4,51 +4,77 @@
 
 import 'dart:convert';
 
-LogInReturn logInReturnFromJson(String str) =>
-    LogInReturn.fromJson(json.decode(str));
+LogInReturn logInReturnFromJson(String str) {
+  print('json decode ${jsonDecode(str)}');
+  return LogInReturn.fromJson(jsonDecode(str));
+}
 
-String logInReturnToJson(LogInReturn data) => json.encode(data.toJson());
+Map<String, dynamic> logInReturnToJson(Map<String, dynamic> data) => data;
 
 class LogInReturn {
   LogInReturn({
-    required this.firstName,
-    required this.lastName,
-    required this.userUid,
-    required this.stacks,
-    required this.selectedStacks,
-    required this.selectedOrgs,
+    required this.user,
   });
 
-  String firstName;
-  String lastName;
-  String userUid;
-  List<LogInReturnStack> stacks;
-  List<dynamic> selectedStacks;
-  List<dynamic> selectedOrgs;
+  List<User> user;
 
   factory LogInReturn.fromJson(Map<String, dynamic> json) => LogInReturn(
-        firstName: json["first_name"],
-        lastName: json["last_name"],
-        userUid: json["user_uid"],
-        stacks: List<LogInReturnStack>.from(
-            json["stacks"].map((x) => LogInReturnStack.fromJson(x))),
-        selectedStacks:
-            List<dynamic>.from(json["selected_stacks"].map((x) => x)),
-        selectedOrgs: List<dynamic>.from(json["selected Orgs"].map((x) => x)),
-      );
+      // user: List<User>.from(json["user"].map((x) => User.fromJson(x))),
+      user: (json["user"] as List).map((e) => User.fromJson(e)).toList());
 
   Map<String, dynamic> toJson() => {
-        "first_name": firstName,
-        "last_name": lastName,
-        "user_uid": userUid,
-        "stacks": List<dynamic>.from(stacks.map((x) => x.toJson())),
-        "selected_stacks": List<dynamic>.from(selectedStacks.map((x) => x)),
-        "selected Orgs": List<dynamic>.from(selectedOrgs.map((x) => x)),
+        "user": List<dynamic>.from(user.map((x) => x.toJson())),
       };
 }
 
-class LogInReturnStack {
-  LogInReturnStack({
+class User {
+  User({
+    required this.userUid,
+    required this.firstName,
+    required this.lastName,
+    required this.authToken,
+    required this.email,
+    required this.selectedStacks,
+    required this.stacks,
+    required this.id,
+  });
+
+  String userUid;
+  String firstName;
+  String lastName;
+  String authToken;
+  String email;
+  List<dynamic> selectedStacks;
+  List<UserStack> stacks;
+  String id;
+
+  factory User.fromJson(Map<String, dynamic> json) => User(
+        userUid: json["user_uid"],
+        firstName: json["first_name"],
+        lastName: json["last_name"],
+        authToken: json["auth_token"],
+        email: json["email"],
+        selectedStacks:
+            List<dynamic>.from(json["selected_stacks"].map((x) => x)),
+        stacks: List<UserStack>.from(
+            json["stacks"].map((x) => UserStack.fromJson(x))),
+        id: json["id"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "user_uid": userUid,
+        "first_name": firstName,
+        "last_name": lastName,
+        "auth_token": authToken,
+        "email": email,
+        "selected_stacks": List<dynamic>.from(selectedStacks.map((x) => x)),
+        "stacks": List<dynamic>.from(stacks.map((x) => x.toJson())),
+        "id": id,
+      };
+}
+
+class UserStack {
+  UserStack({
     required this.orgName,
     required this.orgUid,
     required this.stacks,
@@ -58,8 +84,7 @@ class LogInReturnStack {
   String orgUid;
   List<StackStack> stacks;
 
-  factory LogInReturnStack.fromJson(Map<String, dynamic> json) =>
-      LogInReturnStack(
+  factory UserStack.fromJson(Map<String, dynamic> json) => UserStack(
         orgName: json["org_name"],
         orgUid: json["org_uid"],
         stacks: List<StackStack>.from(
