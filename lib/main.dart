@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:my_contentstack_app/modules/login.dart';
+import 'package:my_contentstack_app/modules/submit.dart';
 import 'package:my_contentstack_app/routes/route_genretor.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:my_contentstack_app/services/submit_token.dart';
 
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
     'high_importance_channel', // id
@@ -49,13 +52,32 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   late FirebaseMessaging messaging;
 
+  Future<SubmitStack> onSubmit(res) async {
+    try {
+      var data = await submitTokenCall(res);
+      print('hello run time ${data.body.runtimeType}');
+      if (data.statusCode == 200) {
+        final resStaring = data.body;
+        return submitStackFromJson(resStaring);
+      }
+    } catch (err) {
+      print(err);
+      rethrow;
+    }
+    throw "Error";
+  }
+
   @override
   void initState() {
     super.initState();
 
     FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
     _firebaseMessaging.getToken().then((token) {
+      final Map<String, dynamic> data = {};
       print("token is $token");
+      data["token"] = token;
+      final dataRes = onSubmit(data);
+      print(dataRes);
     });
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
